@@ -69,9 +69,24 @@ if (isset($_POST['keyword'])) {
                         <?php
                         $query = mysqli_query($konek, "SELECT * FROM data_buku ORDER BY Rating DESC");
                         $no = 1;
+                        $keyword = isset($_POST['keyword']) ? mysqli_real_escape_string($konek, $_POST['keyword']) : '';
+
+                        if(!empty($keyword)){
+                            $query = mysqli_query($konek, "SELECT * FROM data_buku WHERE Nama_buku LIKE '%keyword%' OR Author LIKE '%keyword%' ORDER BY Rating DESC");
+                        }else{
+                            $query = mysqli_query($konek, "SELECT * FROM data_buku ORDER BY Rating DESC");
+                        }
+
                         while ($data =  mysqli_fetch_assoc($query)) {
+                            $penanda = '';
+
+                             if(!empty($keyword) &&(stripos($data['Nama_buku'], $keyword) !== false||
+                             stripos($data['Author'], $keyword) !==  false
+                             )){
+                                $penanda = 'kasi-tanda';
+                             }
                         ?>
-                            <tr>
+                            <tr class="<?= $penanda?>">
                                 <td><?= $no++ ?></td>
                                 <td><?= $data['Nama_buku'] ?></td>
                                 <td><?= $data['Kategori'] ?></td>
